@@ -2,6 +2,10 @@ SHELL = /bin/sh -e
 CASS_VERSION = 3.11.8
 CASS_IMAGE = cassandra:${CASS_VERSION}
 CASS_CONFIG_PATH = ${PWD}/db/configs
+CASS_USER = cassandra
+CASS_SECRET = cassandra
+
+KEYSPACE = development
 
 up: 
 	@echo "--> spinning up docker containers"
@@ -29,7 +33,7 @@ unpause:
 copy-base-config: 
 	@echo "--> pulling configs from cassandra image"
 	@rm -rf ${CASS_CONFIG_PATH}/etc_cassandra-${CASS_VERSION}_vanilla
-	@if [ $$(docker images --format "{{.Repository}}" | grep -c "${CASS_IMAGE}") -gt 0 ]; then \
+	@if [ $$(docker images --format "{{.Repository}}" | grep -c "${CASS_IMAGE}") -lt 1 ]; then \
 		echo "--> found no matching image. pulling."; \
 		docker pull ${CASS_IMAGE}; \
 	fi
@@ -47,4 +51,14 @@ copy-config-to-cluster:
 
 get-keyspaces: 
 	@echo "--> getting cassandra keyspaces"
-	@docker exec cass1 cqlsh -e "describe keyspaces;"   
+	@docker exec cass1 cqlsh -e "describe keyspaces;"    
+
+init-keyspace: 
+	@echo "--> checking for ${KEYSPACE} keyspace"
+	@if [ $$(docker  exec cass1 cqlsh -e "describe keyspaces;" | grep -c "${KEYSPACE}") -lt 1 ]; then \
+		echo "--> found no matching keyspace"; \
+		for i in {1..5}; do $$(docker cp ${PWD}/db/init_keyspace.cql cass1:/ && docker exec cass1 cqlsh -u ${CASS_USER} -p ${CASS_SECRET} -f /init_keyspace.cql) && break || sleep 10; \
+		done; \
+	fi
+	@echo "--> ${KEYSPACE} keyspace ready"
+	@docker exec cass1 cqlsh -e "describe keyspace ${KEYSPACE}"

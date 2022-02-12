@@ -21,8 +21,8 @@ services:
     ports:
       - '9042:9042' # Expose native binary CQL port for your apps
     volumes:
-      - ./db/data/cass1:/var/lib/cassandra # This is the volume that will persist data for cass1 node
-      - ./db/etc/cass1:/etc/cassandra # Use your own config files for full control
+      - /var/lib/cassandra # This is the volume that will persist data for cass1 node
+      - /etc/cassandra # Use your own config files for full control
     environment: &environment # Declare and save environments variables into "environment"
       CASSANDRA_SEEDS: 'cass1,cass2' # The first two nodes will be seeds
       CASSANDRA_CLUSTER_NAME: CASS_CLUSTER
