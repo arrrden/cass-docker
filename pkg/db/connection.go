@@ -15,7 +15,7 @@ var (
 	keyspace   string = "development"
 )
 
-func InitConnection() error {
+func InitConnection() (*gocql.Session, error) {
 	connection.cluster = gocql.NewCluster(host)
 	connection.cluster.Consistency = gocql.Quorum
 	connection.cluster.Keyspace = keyspace
@@ -24,8 +24,8 @@ func InitConnection() error {
 
 	connection.session, err = connection.cluster.CreateSession()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return connection.session, nil
 }

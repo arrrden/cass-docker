@@ -7,6 +7,8 @@ CASS_SECRET = cassandra
 
 KEYSPACE = development
 
+ENTRY_POINT = cmd/main.go
+
 up: 
 	@echo "--> spinning up docker containers"
 	${MAKE} copy-base-config
@@ -14,7 +16,7 @@ up:
 	@docker compose up -d
 
 down: 
-	@echo "--> stopping docker containers"
+	@echo "--> dropping docker containers"
 	@docker compose down 
 
 restart: 
@@ -62,3 +64,7 @@ init-keyspace:
 	fi
 	@echo "--> ${KEYSPACE} keyspace ready"
 	@docker exec cass1 cqlsh -e "describe keyspace ${KEYSPACE}"
+
+run: 
+	@echo "--> starting app"
+	@go run ${ENTRY_POINT}
