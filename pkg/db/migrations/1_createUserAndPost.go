@@ -40,21 +40,14 @@ func createPostTable(s *gocql.Session) error {
 	return nil
 }
 
-func CreateUserAndPostTables(session *gocql.Session) MigrationFunc {
+func (m *Migrate) CreateUserAndPostTables() MigrationFunc {
 	return func() error {
-		// tables := []createFunc{createUserTable, createPostTable}
-		// for _, x := range tables {
-		// 	if err := x(session); err != nil {
-		// 		return err
-		// 	}
-		// }
-
 		var err error
-		err = createUserTable(session)
+		err = createUserTable(m.Session)
 		if err != nil {
 			return err
 		}
-		err = createPostTable(session)
+		err = createPostTable(m.Session)
 		if err != nil {
 			return err
 		}

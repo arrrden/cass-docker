@@ -1,8 +1,6 @@
 package migrations
 
-import (
-	"github.com/gocql/gocql"
-)
+import "github.com/gocql/gocql"
 
 type Migrate struct {
 	Session *gocql.Session

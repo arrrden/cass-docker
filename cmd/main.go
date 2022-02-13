@@ -12,7 +12,7 @@ import (
 
 var port string = "5000"
 
-func migrate(session *gocql.Session) {
+func migrate(session *gocql.Session) error {
 	fmt.Println("Checking for outstanding db migrations")
 
 	m := migrations.Migrate{
@@ -20,20 +20,25 @@ func migrate(session *gocql.Session) {
 	}
 
 	err := m.Run([]migrations.MigrationFunc{
-		migrations.CreateUserAndPostTables(session),
+		m.CreateUserAndPostTables(),
 	})
 	if err != nil {
-		log.Fatalf("Failed to apply migration: %s", err)
+		return err
 	}
+
+	return nil
 }
 
 func main() {
 	session, err := db.InitConnection()
 	if err != nil {
-		log.Fatalf("Failed to create db connection")
+		log.Fatalf("Failed to create db connection: %s", err)
 	}
 
-	migrate(session)
+	err = migrate(session)
+	if err != nil {
+		log.Fatalf("Failed to apply migration: %s", err)
+	}
 
 	app := fiber.New()
 
