@@ -9,11 +9,12 @@ import (
 func createUserTable(s *gocql.Session) error {
 	query := `
 		CREATE TABLE IF NOT EXISTS development.user ( 
-			id uuid PRIMARY KEY, 
-			createdAt timestamp, 
-			updatedAt timestamp,
-			name text, 
-			email text,
+			id 				uuid PRIMARY KEY, 
+			created_at 		timestamp, 
+			updated_at 		timestamp,
+			name 			text, 
+			email 			text,
+			email_verified	timestamp,
 		);
 	`
 
@@ -27,9 +28,10 @@ func createUserTable(s *gocql.Session) error {
 func createPostTable(s *gocql.Session) error {
 	query := `
 		CREATE TABLE IF NOT EXISTS development.post ( 
-			id uuid PRIMARY KEY, 
-			createdAt timestamp, 
-			updatedAt timestamp,
+			id 			uuid PRIMARY KEY, 
+			created_at 	timestamp, 
+			updated_at 	timestamp,
+			text 		text,
 		);
 	`
 

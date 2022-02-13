@@ -68,3 +68,7 @@ init-keyspace:
 run: 
 	@echo "--> starting app"
 	@go run ${ENTRY_POINT}
+
+generate: 
+	@echo "--> genertaing models"
+	@$$GOBIN/schemagen -cluster="127.0.0.1:9042" -keyspace="development" -output="pkg/models" -pkgname="models"
